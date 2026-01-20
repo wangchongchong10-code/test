@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>祝社长生日快乐 ✨</title>
+  <style>
+    :root{
+      --bg1:#050510;
+      --bg2:#090925;
+      --neon1:#7c3aed;
+      --neon2:#22d3ee;
+      --neon3:#f472b6;
+      --text:#eaf2ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      overflow:hidden;
+      background: radial-gradient(1200px 900px at 20% 15%, #14143a 0%, var(--bg2) 35%, var(--bg1) 75%);
+      font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", Arial;
+      color:var(--text);
+    }
+
+    /* animated aurora */
+    .aurora{
+      position:fixed; inset:-40%;
+      background:
+        radial-gradient(closest-side at 30% 30%, rgba(124,58,237,.35), transparent 65%),
+        radial-gradient(closest-side at 70% 40%, rgba(34,211,238,.28), transparent 60%),
+        radial-gradient(closest-side at 55% 70%, rgba(244,114,182,.22), transparent 62%);
+      filter: blur(30px) saturate(130%);
+      animation: float 12s ease-in-out infinite alternate;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    @keyframes float{
+      0%{transform:translate3d(-2%, -1%, 0) rotate(-2deg) scale(1.02)}
+      100%{transform:translate3d(2%, 1%, 0) rotate(2deg) scale(1.06)}
+    }
+
+    /* center card */
+    .wrap{
+      position:fixed; inset:0;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+    .card{
+      width:min(920px, 92vw);
+      border-radius:24px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 30px 90px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.06) inset;
+      backdrop-filter: blur(12px);
+      padding:28px 22px 20px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, rgba(124,58,237,.55), rgba(34,211,238,.35), rgba(244,114,182,.40));
+      opacity:.25;
+      filter: blur(18px);
+      transform: translate3d(0,0,0);
+      pointer-events:none;
+    }
+
+    .topline{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      font-size:13px;
+      letter-spacing:.5px;
+      user-select:none;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--neon2));
+      box-shadow: 0 0 16px rgba(34,211,238,.85);
+    }
+
+    .title{
+      position:relative;
+      margin:8px 0 4px;
+      font-size: clamp(34px, 5vw, 68px);
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-align:center;
+      line-height:1.1;
+      text-shadow:
+        0 0 10px rgba(34,211,238,.35),
+        0 0 22px rgba(124,58,237,.35),
+        0 0 42px rgba(244,114,182,.22);
+    }
+    .title .neon{
+      background: linear-gradient(90deg, var(--neon2), #fff, var(--neon3), var(--neon1));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 14px rgba(34,211,238,.35));
+    }
+
+    .subtitle{
+      position:relative;
+      text-align:center;
+      opacity:.92;
+      margin:0 auto 18px;
+      font-size: clamp(14px, 2.2vw, 18px);
+      max-width: 52ch;
+      line-height:1.75;
+    }
+
+    /* typing */
+    .typing{
+      display:inline-block;
+      border-right: 2px solid rgba(234,242,255,.85);
+      padding-right:6px;
+      white-space:nowrap;
+      overflow:hidden;
+      animation: caret 900ms steps(1) infinite;
+    }
+    @keyframes caret{50%{border-color:transparent}}
+
+    /* controls */
+    .controls{
+      position:relative;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      margin-top:8px;
+    }
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.30);
+      color: var(--text);
+      padding:10px 14px;
+      border-radius:14px;
+      font-size:14px;
+      cursor:pointer;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      backdrop-filter: blur(10px);
+    }
+    button:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.28);
+      background: rgba(255,255,255,.09);
+    }
+    button:active{transform: translateY(0)}
+    .hint{
+      position:relative;
+      text-align:center;
+      font-size:12px;
+      opacity:.75;
+      margin-top:10px;
+    }
+
+    /* canvases */
+    canvas{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    #stars{z-index:0}
+    #fx{z-index:2; pointer-events:none}
+    .wrap{z-index:1}
+
+    /* confetti emoji */
+    .sparkle{
+      position:absolute;
+      top:-30px;
+      font-size:22px;
+      opacity:.9;
+      filter: drop-shadow(0 0 10px rgba(244,114,182,.35));
+      animation: fall linear forwards;
+      pointer-events:none;
+    }
+    @keyframes fall{
+      to{ transform: translateY(120vh) rotate(540deg); opacity:0.95; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+  <canvas id="fx"></canvas>
+  <div class="aurora"></div>
+
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="topline">
+        <div class="badge"><span class="dot"></span> Neon Celebration Mode</div>
+        <div class="badge">✨ Click / Tap for fireworks</div>
+      </div>
+
+      <div class="title">
+        <span class="neon">祝社长</span><br/>
+        <span class="neon">生日快乐</span>
+      </div>
+
+      <p class="subtitle">
+        <span id="typing" class="typing"></span>
+      </p>
+
+      <div class="controls">
+        <button id="boom">来点烟花 🎆</button>
+        <button id="confetti">彩带雨 🎉</button>
+        <button id="pulse">心跳祝福 💗</button>
+      </div>
+      <div class="hint">小提示：随便点屏幕任意位置都会放烟花；支持手机全屏观看更酷～</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Typing text =====
+    const lines = [
+      "祝祝社长：新的一岁，",
+      "灵感爆棚，项目起飞，",
+      "生活甜度拉满，快乐不断电！✨"
+    ];
+    const typingEl = document.getElementById("typing");
+    let li = 0, ci = 0;
+    function typeLoop(){
+      const cur = lines[li];
+      typingEl.textContent = cur.slice(0, ci);
+      ci++;
+      if(ci <= cur.length){
+        setTimeout(typeLoop, 48);
+      }else{
+        setTimeout(() => {
+          li = (li + 1) % lines.length;
+          ci = 0;
+          setTimeout(typeLoop, 350);
+        }, 900);
+      }
+    }
+    typeLoop();
+
+    // ===== Stars background =====
+    const starCanvas = document.getElementById("stars");
+    const sctx = starCanvas.getContext("2d");
+    let W=0,H=0, DPR=1;
+    function resize(){
+      DPR = Math.min(2, window.devicePixelRatio || 1);
+      W = starCanvas.width = Math.floor(innerWidth * DPR);
+      H = starCanvas.height = Math.floor(innerHeight * DPR);
+      fxCanvas.width = Math.floor(innerWidth * DPR);
+      fxCanvas.height = Math.floor(innerHeight * DPR);
+      starCanvas.style.width = fxCanvas.style.width = innerWidth + "px";
+      starCanvas.style.height = fxCanvas.style.height = innerHeight + "px";
+      sctx.setTransform(1,0,0,1,0,0);
+      fctx.setTransform(1,0,0,1,0,0);
+      initStars();
+    }
+    let stars=[];
+    function initStars(){
+      const count = Math.floor((innerWidth*innerHeight)/9000);
+      stars = Array.from({length: count}, () => ({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: (Math.random()*1.2 + 0.4)*DPR,
+        a: Math.random()*0.6 + 0.2,
+        tw: Math.random()*0.02 + 0.005
+      }));
+    }
+    function drawStars(){
+      sctx.clearRect(0,0,W,H);
+      // subtle vignette
+      const g = sctx.createRadialGradient(W*0.5, H*0.45, 0, W*0.5, H*0.45, Math.max(W,H)*0.7);
+      g.addColorStop(0, "rgba(255,255,255,0.02)");
+      g.addColorStop(1, "rgba(0,0,0,0.55)");
+      sctx.fillStyle = g;
+      sctx.fillRect(0,0,W,H);
+
+      for(const st of stars){
+        st.a += (Math.random()-0.5)*st.tw;
+        st.a = Math.max(0.15, Math.min(0.9, st.a));
+        sctx.beginPath();
+        sctx.fillStyle = `rgba(234,242,255,${st.a})`;
+        sctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+        sctx.fill();
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    // ===== Fireworks FX =====
+    const fxCanvas = document.getElementById("fx");
+    const fctx = fxCanvas.getContext("2d");
+
+    const particles=[];
+    function spawnFirework(x,y){
+      const burst = 90 + Math.floor(Math.random()*40);
+      const baseSpd = (innerWidth < 520 ? 3.6 : 4.4) * DPR;
+      for(let i=0;i<burst;i++){
+        const ang = (i/burst) * Math.PI*2;
+        const spd = baseSpd * (0.55 + Math.random()*1.15);
+        particles.push({
+          x: x*DPR, y: y*DPR,
+          vx: Math.cos(ang)*spd,
+          vy: Math.sin(ang)*spd,
+          life: 68 + Math.random()*34,
+          age: 0,
+          // color via hue shift
+          h: 180 + Math.random()*140,
+          s: 95,
+          l: 65
+        });
+      }
+    }
+    function tickFX(){
+      fctx.clearRect(0,0,fxCanvas.width, fxCanvas.height);
+
+      // trailing glow
+      fctx.globalCompositeOperation = "lighter";
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        p.age++;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+        p.vy += 0.05 * DPR; // gravity
+        const t = p.age / p.life;
+        const alpha = Math.max(0, 1 - t);
+        const radius = (1.6 + 2.2*(1-t)) * DPR;
+
+        fctx.beginPath();
+        fctx.fillStyle = `hsla(${p.h},${p.s}%,${p.l}%,${alpha})`;
+        fctx.arc(p.x, p.y, radius, 0, Math.PI*2);
+        fctx.fill();
+
+        if(p.age >= p.life) particles.splice(i,1);
+      }
+      fctx.globalCompositeOperation = "source-over";
+      requestAnimationFrame(tickFX);
+    }
+
+    // ===== Confetti emoji rain =====
+    const emojis = ["🎉","✨","🎆","💗","🥳","🎂","🍰","🌟"];
+    function confettiRain(){
+      for(let i=0;i<26;i++){
+        const el = document.createElement("div");
+        el.className = "sparkle";
+        el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        el.style.left = Math.random()*100 + "vw";
+        el.style.animationDuration = (2.6 + Math.random()*2.2) + "s";
+        el.style.transform = `translateY(-20px) rotate(${Math.random()*180}deg)`;
+        el.style.opacity = 0.7 + Math.random()*0.25;
+        el.style.fontSize = (18 + Math.random()*20) + "px";
+        document.body.appendChild(el);
+        el.addEventListener("animationend", () => el.remove());
+      }
+    }
+
+    // ===== Heart pulse =====
+    const card = document.getElementById("card");
+    function heartPulse(){
+      card.animate([
+        { transform: "scale(1)", boxShadow: "0 30px 90px rgba(0,0,0,.55)" },
+        { transform: "scale(1.03)", boxShadow: "0 35px 110px rgba(244,114,182,.22)" },
+        { transform: "scale(1)", boxShadow: "0 30px 90px rgba(0,0,0,.55)" }
+      ], { duration: 520, easing: "cubic-bezier(.2,.9,.2,1)" });
+      // small firework at center
+      const rect = card.getBoundingClientRect();
+      spawnFirework(rect.left + rect.width/2, rect.top + rect.height/2);
+    }
+
+    // Buttons
+    document.getElementById("boom").onclick = () => {
+      spawnFirework(innerWidth*0.5, innerHeight*0.45);
+      spawnFirework(innerWidth*0.35, innerHeight*0.55);
+      spawnFirework(innerWidth*0.65, innerHeight*0.55);
+    };
+    document.getElementById("confetti").onclick = confettiRain;
+    document.getElementById("pulse").onclick = heartPulse;
+
+    // Click anywhere fireworks
+    window.addEventListener("pointerdown", (e) => {
+      spawnFirework(e.clientX, e.clientY);
+    }, {passive:true});
+
+    // Auto small fireworks
+    setInterval(() => {
+      const x = innerWidth*(0.2 + Math.random()*0.6);
+      const y = innerHeight*(0.2 + Math.random()*0.45);
+      spawnFirework(x,y);
+    }, 1600);
+
+    // Init
+    window.addEventListener("resize", resize);
+    resize();
+    drawStars();
+    tickFX();
+  </script>
+</body>
+</html>
